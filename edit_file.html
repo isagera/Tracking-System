@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Edit File {{ file.F_No }}{% endblock %}
+
+{% block content %}
+    <h2>Edit Personal File: {{ file.F_No }}</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="f_no_display">File Number (F/No):</label>
+            <input type="text" id="f_no_display" value="{{ file.F_No }}" disabled>
+            </div>
+        <div class="form-group">
+            <label for="rank">Rank:</label>
+            <input type="text" id="rank" name="rank" value="{{ file.Rank if file.Rank is not none else '' }}">
+        </div>
+        <div class="form-group">
+            <label for="names">Names:</label>
+            <input type="text" id="names" name="names" value="{{ file.Names if file.Names is not none else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="origin">Origin of the file:</label>
+            <input type="text" id="origin" name="origin" value="{{ file.Origin if file.Origin is not none else '' }}">
+        </div>
+        <div class="form-group">
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" name="destination" value="{{ file.Destination if file.Destination is not none else '' }}">
+        </div>
+        <div class="form-group">
+            <label for="date_received">Date of Receive (YYYY-MM-DD):</label>
+            <input type="text" id="date_received" name="date_received" value="{{ file.Date_Received if file.Date_Received is not none else '' }}" placeholder="YYYY-MM-DD" required>
+        </div>
+        <div class="form-group">
+            <label for="reason">Reason:</label> {# Renamed from Comment #}
+            <textarea id="reason" name="reason">{{ file.Reason if file.Reason is not none else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="action_taken">Action Taken:</label> {# New field #}
+            <input type="text" id="action_taken" name="action_taken" value="{{ file.Action_Taken if file.Action_Taken is not none else '' }}">
+        </div>
+        <div class="form-group">
+            <label for="date_returned">Date of Return (YYYY-MM-DD):</label>
+            <input type="text" id="date_returned" name="date_returned" value="{{ file.Date_Returned if file.Date_Returned is not none else '' }}" placeholder="YYYY-MM-DD">
+        </div>
+        <div class="form-group">
+            <label for="return_office">Return Office:</label>
+            <input type="text" id="return_office" name="return_office" value="{{ file.Return_Office if file.Return_Office is not none else '' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Update File</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

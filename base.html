@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Personal File Tracking System{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 1200px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1, h2 { color: #0056b3; }
+        /* Updated Navigation Bar Styling */
+        nav {
+            margin-bottom: 15px; /* Reduced spacing */
+            display: flex;
+            justify-content: space-between; /* Distribute items: left, center, right */
+            align-items: center;
+            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+            gap: 10px; /* Space between main sections of nav */
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between flag and Home link */
+        }
+        .nav-center-title {
+            flex-grow: 1; /* Allows the title to take up available space */
+            text-align: center; /* Centers the text within its flexible space */
+            min-width: 200px; /* Prevents title from shrinking too much */
+            margin: 0 10px; /* Add horizontal margin to title for breathing room */
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between Download and Logout */
+        }
+        .flag-image {
+            height: 45px; /* Slightly reduced size for flag */
+            vertical-align: middle;
+        }
+        .main-heading {
+            font-size: 2.2em; /* Adjusted font size */
+            margin: 0; /* Remove default margin */
+            color: #0056b3;
+        }
+
+        /* General Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary { background-color: #007bff; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .btn-warning { background-color: #ffc107; color: #212549; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-info { background-color: #17a2b8; }
+        .btn-black { background-color: #000; color: white; }
+        .btn-black:hover { background-color: #333; }
+        .btn:hover { opacity: 0.9; }
+
+        /* Form and Table Styles */
+        .form-group { margin-bottom: 10px; } /* Reduced spacing */
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: calc(100% - 16px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; } /* Reduced spacing */
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .actions-cell {
+            white-space: nowrap;
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+        }
+        .actions-cell form { margin: 0; display: inline-block; }
+
+        /* New container for Add New File and Search */
+        .actions-and-search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px; /* Reduced spacing */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 10px; /* Space between the add button and search form */
+        }
+
+        .search-form {
+            flex-grow: 1; /* Allow search form to take available space */
+            display: flex;
+            gap: 5px; /* Reduced gap for input and button */
+            justify-content: flex-end; /* Align search elements to the right */
+            min-width: 250px; /* Minimum width to prevent crushing */
+        }
+        .search-form input[type="text"] {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-width: 250px; /* Limit input width */
+        }
+        .search-form .btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Flash message styles */
+        .flash-messages { margin-bottom: 10px; } /* Reduced spacing */
+        .flash-message { padding: 10px; margin-bottom: 8px; border-radius: 5px; font-weight: bold; opacity: 1; transition: opacity 0.5s ease-in-out; }
+        .flash-message.hidden { opacity: 0; height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0; margin-bottom: 0; }
+        .flash-message.success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .flash-message.danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .flash-message.info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+
+        /* Home link specific style */
+        nav .nav-left a.home-link { /* Updated selector */
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            text-decoration: none; /* Ensure no underline by default */
+            color: #007bff; /* Default link color */
+        }
+        nav .nav-left a.home-link:hover { /* Updated selector */
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="nav-left">
+                <img src="https://www.animatedimages.org/data/media/907/animated-uganda-flag-image-0004.gif" alt="Animated Uganda Flag" class="flag-image">
+                {% if session.logged_in %}
+                    <a href="{{ url_for('index') }}" class="home-link">Home</a>
+                {% endif %}
+            </div>
+            <div class="nav-center-title">
+                <h2 class="main-heading">FILE TRACKING SYSTEM</h2>
+            </div>
+            <div class="nav-right">
+                {% if session.logged_in %}
+                    <a href="{{ url_for('download_excel') }}" class="btn btn-black">Download Data (Excel)</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a> {# Added class for consistent styling #}
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a> {# Added class for consistent styling #}
+                {% endif %}
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(msg) {
+                if (msg.classList.contains('success') && msg.textContent.includes('Logged in successfully')) {
+                    setTimeout(function() {
+                        msg.classList.add('hidden');
+                        setTimeout(function() {
+                            msg.style.display = 'none';
+                        }, 500);
+                    }, 5000);
+                } else {
+                    setTimeout(function() {
+                        msg.classList.add('hidden');
+                        setTimeout(function() {
+                            msg.style.display = 'none';
+                        }, 500);
+                    }, 7000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
